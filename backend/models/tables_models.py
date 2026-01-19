@@ -28,7 +28,8 @@ class Client(Base):
     __tablename__= "clients"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    full_name: Mapped[str] = mapped_column(String(50))
+    first_name: Mapped[str] = mapped_column(String(50))
+    surname: Mapped[str] = mapped_column(String(50))
     phone: Mapped[str] = mapped_column(String(20), unique=True)
     telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True)
     notes: Mapped[str | None] = mapped_column(TEXT)
