@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment (це сміття не треба на гітхабі)
+venv/
+.venv/
+env/
+
+# Environment Variables (СЕКРЕТИ! Ніколи не заливай це)
+.env
+.env.local
+
+# IDE settings (твої налаштування редактора нікому не треба)
+.idea/
+.vscode/
+*.swp
+
+# Database (якщо локально створилась папка з даними)
+postgres_data/
+
+# MacOS junk
+.DS_Store
