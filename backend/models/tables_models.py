@@ -1,6 +1,6 @@
 import enum
 from datetime import datetime
-from backend.core.database import Base
+from core.database import Base
 from sqlalchemy import ForeignKey, String, Enum, func, DECIMAL, BigInteger, TEXT
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -29,7 +29,7 @@ class Client(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     first_name: Mapped[str] = mapped_column(String(50))
-    surname: Mapped[str] = mapped_column(String(50))
+    last_name: Mapped[str] = mapped_column(String(50))
     phone: Mapped[str] = mapped_column(String(20), unique=True)
     telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True)
     notes: Mapped[str | None] = mapped_column(TEXT)
