@@ -16,3 +16,6 @@ class ClientResponse(ClientBase):
 
     class Config:
         from_attributes = True
+
+class ClientSearch(BaseModel):
+    phone: str = Field(min_length=10)
