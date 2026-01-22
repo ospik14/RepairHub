@@ -1,16 +1,11 @@
 from repositories import manager_repo
-from models.tables_models import Client, Device
-from schemas.client import ClientResponse
+from models.tables_models import Client, Device, Order
+from schemas.client import ClientResponse, ClientCreate
 from schemas.device import DeviceResponse, DeviceCreate
+from schemas.order import OrderResponse, OrderCreate
 
-async def new_client(db, client_request):
-    client = Client(                                        #!!!!!
-        first_name = client_request.first_name,
-        last_name = client_request.last_name,
-        phone = client_request.phone,
-        telegram_id = 1133323,
-        notes = client_request.notes
-    )
+async def new_client(db, client_request: ClientCreate):
+    client = Client(**client_request.model_dump())
     new_client = await manager_repo.new_client(db, client)
 
     return ClientResponse.model_validate(new_client)
@@ -40,3 +35,9 @@ async def get_devices(db, client_id):
         DeviceResponse.model_validate(device)
         for device in devices
     ]
+
+async def new_order(db, order_request: OrderCreate):
+    order = Order(**order_request.model_dump())
+    new_order = await manager_repo.new_order(db, order)
+
+    return OrderResponse.model_validate(new_order)

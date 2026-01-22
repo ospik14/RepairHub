@@ -31,7 +31,7 @@ class Client(Base):
     first_name: Mapped[str] = mapped_column(String(50))
     last_name: Mapped[str] = mapped_column(String(50))
     phone: Mapped[str] = mapped_column(String(20), unique=True)
-    telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True)
+    telegram_id: Mapped[int | None] = mapped_column(BigInteger, unique=True)
     notes: Mapped[str | None] = mapped_column(TEXT)
 
 class Device(Base):
@@ -41,13 +41,13 @@ class Device(Base):
     client_id: Mapped[int] = mapped_column(ForeignKey('clients.id'))
     model: Mapped[str] = mapped_column(String(50))
     type: Mapped[str] = mapped_column(String(20))
-    serial_number: Mapped[str] = mapped_column(String(255))
+    serial_number: Mapped[str | None] = mapped_column(String(255))
 
 class Order(Base):
     __tablename__= "orders"
     id: Mapped[int] = mapped_column(primary_key=True)
     device_id: Mapped[int] = mapped_column(ForeignKey('devices.id'))
-    master_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    master_id: Mapped[int | None] = mapped_column(ForeignKey('users.id'))
     status: Mapped[Status] = mapped_column(Enum(Status, native_enum=True))
     description: Mapped[str] = mapped_column(String(255))
     total_price: Mapped[float] = mapped_column(DECIMAL(10, 2))

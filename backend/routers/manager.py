@@ -3,7 +3,8 @@ from fastapi import APIRouter
 from dependencies import db_dep
 from schemas.client import ClientCreate, ClientSearch
 from schemas.device import DeviceCreate
-from services.manager_logic import new_client, get_client, new_device, get_devices
+from schemas.order import OrderCreate
+from services.manager_logic import new_client, get_client, new_device, get_devices, new_order
 
 router = APIRouter(
     prefix='/manager',
@@ -25,3 +26,7 @@ async def add_device(db: db_dep, device: DeviceCreate):
 @router.post('/search_devices/')
 async def search_devices(db: db_dep, client_id: int):
     return await get_devices(db, client_id)
+
+@router.post('/create_order')
+async def create_order(db: db_dep, order: OrderCreate):
+    return await new_order(db, order)

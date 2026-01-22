@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models.tables_models import Client, Device
+from models.tables_models import Client, Device, Order
 
 async def new_client(db: AsyncSession, client: Client):
     db.add(client)
@@ -28,3 +28,10 @@ async def get_device(db: AsyncSession, client_id: str):
     client = await db.execute(query)
 
     return client.scalars().all()
+
+async def new_order(db: AsyncSession, order: Order):
+    db.add(order)
+    await db.commit()
+    await db.refresh(order)
+
+    return order
