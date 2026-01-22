@@ -4,29 +4,29 @@ from dependencies import db_dep
 from schemas.client import ClientCreate, ClientSearch
 from schemas.device import DeviceCreate
 from schemas.order import OrderCreate
-from services.manager_logic import new_client, get_client, new_device, get_devices, new_order
+from services.manager_logic import register_client, find_client, add_device, find_devices, new_order
 
 router = APIRouter(
     prefix='/manager',
     tags=['manager']
 )
 
-@router.post('/create_client')
+@router.post('/clients')
 async def create_client(db: db_dep, client: ClientCreate):
-    return await new_client(db, client)
+    return await register_client(db, client)
 
-@router.post('/search_client')
+@router.post('/clients/search')
 async def search_client(db: db_dep, client: ClientSearch):
-    return await get_client(db, client)
+    return await find_client(db, client)
 
-@router.post('/add_device')
-async def add_device(db: db_dep, device: DeviceCreate):
-    return await new_device(db, device)
+@router.post('/devices')
+async def create_device(db: db_dep, device: DeviceCreate):
+    return await add_device(db, device)
 
-@router.post('/search_devices/')
+@router.get('/devices/')
 async def search_devices(db: db_dep, client_id: int):
-    return await get_devices(db, client_id)
+    return await find_devices(db, client_id)
 
-@router.post('/create_order')
+@router.post('/orders')
 async def create_order(db: db_dep, order: OrderCreate):
     return await new_order(db, order)
