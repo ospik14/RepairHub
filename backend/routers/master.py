@@ -14,8 +14,8 @@ async def get_available_orders(db: db_dep):
 
 @router.get('/orders/{order_id}/take')
 async def take_order(db: db_dep, order_id: int, master: user_dep):
-    return await assign_master(db, order_id, master)
+    await assign_master(db, order_id, master)
 
 @router.post('/orders/{order_id}/parts')
-async def add_parts_to_order(db: db_dep, order_id: int, parts: PartCreate):
-    return await assign_parts(db, order_id, parts)
+async def add_parts_to_order(db: db_dep, order_id: int, master: user_dep, parts: PartCreate):
+    await assign_parts(db, order_id, master, parts)

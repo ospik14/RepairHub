@@ -13,7 +13,7 @@ async def get_orders(db: AsyncSession):
 
     return orders.scalars().all()
 
-async def update_order(db: AsyncSession, order_id: int, data: dict):
+async def claim_new_order(db: AsyncSession, order_id: int, data: dict):
     stmt = (
         update(Order)
         .where(Order.id == order_id, Order.status == Status.NEW)
@@ -26,7 +26,6 @@ async def update_order(db: AsyncSession, order_id: int, data: dict):
     if result.rowcount == 0:
         raise EntityConflict('Замовлення вже зайнято іншим майстром!')
     
-    return 'Замовлення прийнято'
 
 async def update_part_quantity(db: AsyncSession, part_id, needed_quantity):
     stmt = (
@@ -49,12 +48,15 @@ async def create_order_parts(db: AsyncSession, order_parts: OrderParts):
     db.add(order_parts)
     await db.commit()
 
-async def update_order_price(db: AsyncSession, order_id: int, data: dict):
+async def update_order(db: AsyncSession, order_id: int, master_id: int, data: dict):
     stmt = (
         update(Order)
-        .where(Order.id == order_id)
+        .where(Order.id == order_id, Order.master_id == master_id)
         .values(**data)
         .execution_options(synchronize_session='fetch')
     )
     result = await db.execute(stmt)
     await db.commit()
+
+    if result.rowcount == 0:
+        raise EntityConflict('Це не ваше замовлення!')
