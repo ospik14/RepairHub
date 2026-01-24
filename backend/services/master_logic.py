@@ -20,7 +20,15 @@ async def assign_master(db, order_id: int, master: UserBase):
     return await master_repo.update_order(db, order_id, update_data)
 
 async def assign_parts(db, order_id: int, parts: PartCreate):
-    part = await master_repo.update_part_quantity(db, parts.part_id)
-    print(part)
-
-    #new_part = OrderParts()
+    part_price = await master_repo.update_part_quantity(db, parts.part_id, parts.quantity)
+    
+    new_order_parts = OrderParts(
+        **parts.model_dump(),
+        order_id = order_id,
+        price = part_price
+    )
+    update_data = {
+        'total_price': part_price * parts.quantity
+    }
+    await master_repo.create_order_parts(db, new_order_parts)
+    await master_repo.update_order_price(db, order_id, update_data)

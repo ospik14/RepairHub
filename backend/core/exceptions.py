@@ -1,0 +1,3 @@
+
+class EntityConflict(Exception):
+    pass

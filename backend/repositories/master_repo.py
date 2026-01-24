@@ -1,7 +1,7 @@
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from models.tables_models import Order, Status, Part
+from core.exceptions import EntityConflict
+from models.tables_models import Order, Status, Part, OrderParts
 
 async def get_orders(db: AsyncSession):
     query = (
@@ -24,15 +24,15 @@ async def update_order(db: AsyncSession, order_id: int, data: dict):
     await db.commit()
 
     if result.rowcount == 0:
-        return 'Замовлення вже зайнято іншим майстром!'
+        raise EntityConflict('Замовлення вже зайнято іншим майстром!')
     
     return 'Замовлення прийнято'
 
-async def update_part_quantity(db: AsyncSession, part_id):
+async def update_part_quantity(db: AsyncSession, part_id, needed_quantity):
     stmt = (
         update(Part)
-        .where(Part.id == part_id, Part.quantity > 0)
-        .values(quantity = Part.quantity - 1)
+        .where(Part.id == part_id, Part.quantity >= needed_quantity)
+        .values(quantity = Part.quantity - needed_quantity)
         .execution_options(synchronize_session='fetch')
         .returning(Part.sell_price)
     )
@@ -41,6 +41,20 @@ async def update_part_quantity(db: AsyncSession, part_id):
     await db.commit()
 
     if price is None:
-        return 'Запчастини немає в наявності!'
+        raise EntityConflict('Запчини немає в наявності!')
     
     return price
+
+async def create_order_parts(db: AsyncSession, order_parts: OrderParts):
+    db.add(order_parts)
+    await db.commit()
+
+async def update_order_price(db: AsyncSession, order_id: int, data: dict):
+    stmt = (
+        update(Order)
+        .where(Order.id == order_id)
+        .values(**data)
+        .execution_options(synchronize_session='fetch')
+    )
+    result = await db.execute(stmt)
+    await db.commit()
