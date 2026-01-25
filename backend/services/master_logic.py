@@ -32,4 +32,19 @@ async def assign_parts(db, order_id: int, master: UserBase, parts: PartCreate):
     }
     await master_repo.update_order(db, order_id, master.id, update_data)
     await master_repo.create_order_parts(db, new_order_parts)
+
+async def place_an_order(db, order_id: int, work_price: int, master: UserBase):
+    update_data = {
+        'status': 'READY',
+        'total_price': Order.total_price + work_price
+    }
+    final_order = await master_repo.update_order(db, order_id, master.id, update_data)
+
+    return OrderResponse.model_validate(final_order)
     
+async def view_my_orders(db, master: UserBase):
+    my_orders = await master_repo.get_my_orders(db, master.id)
+    return [
+        OrderResponse.model_validate(order)
+        for order in my_orders
+    ]

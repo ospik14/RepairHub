@@ -51,12 +51,30 @@ async def create_order_parts(db: AsyncSession, order_parts: OrderParts):
 async def update_order(db: AsyncSession, order_id: int, master_id: int, data: dict):
     stmt = (
         update(Order)
-        .where(Order.id == order_id, Order.master_id == master_id)
+        .where(
+            Order.id == order_id, 
+            Order.master_id == master_id,
+            Order.status == Status.IN_PROGRESS
+        )
         .values(**data)
-        .execution_options(synchronize_session='fetch')
+        .returning(Order)
     )
     result = await db.execute(stmt)
     await db.commit()
 
-    if result.rowcount == 0:
-        raise EntityConflict('Це не ваше замовлення!')
+    order = result.scalar_one_or_none()
+
+    if order is None:
+        raise EntityConflict('Це замовлення не доступне!')
+    
+    return order
+
+async def get_my_orders(db: AsyncSession, master_id):
+    query = (
+        select(Order)
+        .where(Order.master_id == master_id)
+    )
+    orders = await db.execute(query)
+    await db.commit()
+
+    return orders.scalars().all()
