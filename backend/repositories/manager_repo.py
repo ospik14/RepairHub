@@ -1,11 +1,15 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from sqlalchemy.exc import IntegrityError
 from models.tables_models import Client, Device, Order
+from core.exceptions import EntityConflict
 
 async def create_client(db: AsyncSession, client: Client):
     db.add(client)
-    await db.commit()
+    try:
+        await db.commit()
+    except IntegrityError:
+        raise EntityConflict('Такий клієнт вже існує!')
     await db.refresh(client)
 
     return client
