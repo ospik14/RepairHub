@@ -1,18 +1,17 @@
 from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from core.database import get_session
-from schemas.user import UserBase
-from models.tables_models import UserRole
+from schemas.user import CurrentUser
+from core.security import decode_token
 
-async def get_user_id():
-    return UserBase(
-        id=3,
-        username='master1',
-        role=UserRole.MASTER
-    )
+oauth_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
+
+def get_current_user(token: Annotated[str, Depends(oauth_bearer)]):
+    print(token)
+    return decode_token(token)
 
 db_dep = Annotated[AsyncSession, Depends(get_session)]
-user_dep = Annotated[UserBase, Depends(get_user_id)]
+user_dep = Annotated[CurrentUser, Depends(get_current_user)]
 form_dep = Annotated[OAuth2PasswordRequestForm, Depends()]

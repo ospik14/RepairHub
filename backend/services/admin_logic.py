@@ -7,7 +7,7 @@ from core.security import hash_password
 async def assign_user(db, user: CreateUser):
     new_user = User(
         username = user.username,
-        hashed_password = hash_password(user.password),
+        hashed_password = await hash_password(user.password),
         role = user.role
     )
     current_user = await create_user(db, new_user)

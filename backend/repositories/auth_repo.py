@@ -6,6 +6,6 @@ from core.exceptions import EntityConflict
 async def get_user(db: AsyncSession, username: str):
     query = (select(User).where(User.username == username))
     user = await db.execute(query)
-    await db.commit
+    await db.commit()
 
     return user.scalars().first()

@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from dependencies import db_dep, user_dep
 from services.master_logic import get_orders, assign_master, assign_parts, place_an_order, view_my_orders
 from schemas.part import PartCreate
@@ -9,7 +9,7 @@ router = APIRouter(
 )
 
 @router.get('/orders/available')
-async def get_available_orders(db: db_dep):
+async def get_available_orders(db: db_dep, master: user_dep):
     return await get_orders(db)
 
 @router.get('/orders/{order_id}/take')
