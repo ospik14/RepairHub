@@ -1,7 +1,7 @@
 import enum
 from datetime import datetime
 from core.database import Base
-from sqlalchemy import ForeignKey, String, Enum, func, DECIMAL, BigInteger, TEXT
+from sqlalchemy import DateTime, ForeignKey, String, Enum, func, DECIMAL, BigInteger, TEXT
 from sqlalchemy.orm import Mapped, mapped_column
 
 class UserRole(enum.Enum):
@@ -70,3 +70,12 @@ class OrderParts(Base):
     part_id: Mapped[int] = mapped_column(ForeignKey('parts.id'))
     quantity: Mapped[int] = mapped_column(default=1)
     price: Mapped[float] = mapped_column(DECIMAL(10, 2))
+
+class RefreshToken(Base):
+    __tablename__="refresh_tokens"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    token: Mapped[str]
+    role: Mapped[UserRole] = mapped_column(Enum(UserRole, native_enum=True))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))

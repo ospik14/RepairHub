@@ -1,14 +1,13 @@
 import os
 from passlib.context import CryptContext
 from fastapi.concurrency import run_in_threadpool
-from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from datetime import timedelta, datetime, timezone
 from dotenv import load_dotenv
 
-from models.tables_models import User
 from core.exceptions import InvalidCredentialsError
 from schemas.user import CurrentUser
+from schemas.token import TokenBase
 
 load_dotenv()
 
@@ -29,27 +28,26 @@ async def hash_password(password: str) -> str:
 async def verify_password(password: str, hashed_password: str):
     return await run_in_threadpool(verify_password_sync, password, hashed_password)
 
-def create_access_token(user: User, expires_time: timedelta):
-    encode = {
-        'sub': user.username,
-        'user_id': user.id,
-        'role': user.role.value
-    }
+def create_token(data: dict, expires_time: timedelta):
+    encode = data.copy()
     expires = datetime.now(timezone.utc) + expires_time
     encode.update({'exp': expires})
-    return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
+    token = jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
+
+    return TokenBase(user_id=data.get('sub'), token=token, expires_at=expires)
 
 def decode_token(token: str):
     try:
+        print(token)
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username = payload.get('sub')
-        user_id = payload.get('user_id')
+        user_id = payload.get('sub')
         role = payload.get('role')
+        type = payload.get('type')
 
-        if not role or not user_id or not username:
+        if not role or not user_id or not type:
             raise JWTError
     
-        return CurrentUser(id=user_id, username=username, role=role)
+        return CurrentUser(id=user_id, role=role, type=type)
     
     except JWTError:
         raise InvalidCredentialsError('Не дійсний токен')
