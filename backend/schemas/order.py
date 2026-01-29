@@ -2,6 +2,22 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 from models.tables_models import Status
 
+class ClientRef(BaseModel):
+    first_name: str
+    last_name: str
+
+    class Config:
+        from_attributes = True
+
+class DeviceRef(BaseModel):
+    id: int
+    client_id: int
+    model: str
+    client: ClientRef | None = None
+
+    class Config:
+        from_attributes = True
+
 class OrderBase(BaseModel):
     device_id: int
     
@@ -16,6 +32,7 @@ class OrderResponse(OrderBase):
     created_at: datetime
     master_id: int | None 
     status: Status 
+    device: DeviceRef | None = None
 
     class Config:
         from_attributes = True

@@ -2,7 +2,7 @@ import enum
 from datetime import datetime
 from core.database import Base
 from sqlalchemy import DateTime, ForeignKey, String, Enum, func, DECIMAL, BigInteger, TEXT
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 class UserRole(enum.Enum):
     ADMIN = 'admin'
@@ -33,6 +33,7 @@ class Client(Base):
     phone: Mapped[str] = mapped_column(String(20), unique=True)
     telegram_id: Mapped[int | None] = mapped_column(BigInteger, unique=True)
     notes: Mapped[str | None] = mapped_column(TEXT)
+    devices: Mapped[list["Device"]] = relationship("Device", back_populates="client")
 
 class Device(Base):
     __tablename__= "devices"
@@ -42,6 +43,8 @@ class Device(Base):
     model: Mapped[str] = mapped_column(String(50))
     type: Mapped[str] = mapped_column(String(20))
     serial_number: Mapped[str | None] = mapped_column(String(255))
+    orders: Mapped[list["Order"]] = relationship("Order", back_populates="device")
+    client: Mapped["Client"] = relationship("Client", back_populates="devices")
 
 class Order(Base):
     __tablename__= "orders"
@@ -52,6 +55,7 @@ class Order(Base):
     description: Mapped[str] = mapped_column(String(255))
     total_price: Mapped[float] = mapped_column(DECIMAL(10, 2))
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    device: Mapped["Device"] = relationship("Device", back_populates="orders")
 
 class Part(Base):
     __tablename__= "parts"

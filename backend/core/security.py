@@ -34,7 +34,10 @@ def create_token(data: dict, expires_time: timedelta):
     encode.update({'exp': expires})
     token = jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
 
-    return TokenBase(user_id=data.get('sub'), token=token, expires_at=expires)
+    return TokenBase(
+        token=token, 
+        expires_at=expires, 
+    )
 
 def decode_token(token: str):
     try:

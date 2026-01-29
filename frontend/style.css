@@ -1,0 +1,74 @@
+/* Основний шрифт */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f4f7f6; /* Світло-сірий фон "SaaS" */
+}
+
+/* Кольори */
+.bg-dark-blue {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+}
+
+.text-primary { color: #2a5298 !important; }
+.btn-primary {
+    background-color: #2a5298;
+    border-color: #2a5298;
+}
+.btn-primary:hover {
+    background-color: #1e3c72;
+}
+
+/* Логін картка */
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    border-radius: 20px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Картки статистики */
+.stat-card {
+    border-left: 4px solid transparent;
+    transition: transform 0.2s;
+}
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+.icon-box {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.bg-light-primary { background-color: #e8f0fe; }
+.bg-light-warning { background-color: #fef3c7; }
+
+/* Картки замовлень */
+.order-card {
+    border: none;
+    border-radius: 15px;
+    background: white;
+    transition: all 0.3s ease;
+    border-left: 5px solid #2a5298; /* Синій індикатор зліва */
+}
+.order-card:hover {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    transform: translateY(-3px);
+}
+
+.badge-status {
+    font-size: 0.8em;
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+
+/* Анімація кнопок */
+.btn-animate:active {
+    transform: scale(0.98);
+}
+
+/* Утиліти */
+.d-none { display: none !important; }

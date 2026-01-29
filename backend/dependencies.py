@@ -14,6 +14,8 @@ def get_current_user(token: Annotated[str, Depends(oauth_bearer)]):
 
     if payload.type != 'access':
         raise InvalidCredentialsError('Невірний тип токену')
+    
+    return payload
 
 db_dep = Annotated[AsyncSession, Depends(get_session)]
 user_dep = Annotated[CurrentUser, Depends(get_current_user)]

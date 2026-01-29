@@ -1,11 +1,13 @@
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 from core.exceptions import EntityConflict
-from models.tables_models import Order, Status, Part, OrderParts
+from models.tables_models import Order, Status, Part, OrderParts, Device
 
 async def get_orders(db: AsyncSession):
     query = (
         select(Order)
+        .options(joinedload(Order.device).joinedload(Device.client))
         .where(Order.master_id.is_(None))
         .where(Order.status == Status.NEW)
     )
@@ -73,6 +75,7 @@ async def get_my_orders(db: AsyncSession, master_id):
     query = (
         select(Order)
         .where(Order.master_id == master_id)
+        .options(joinedload(Order.device).joinedload(Device.client))
     )
     orders = await db.execute(query)
     await db.commit()

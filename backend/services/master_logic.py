@@ -1,6 +1,6 @@
 from repositories import master_repo
 from schemas.order import OrderResponse
-from schemas.user import UserBase
+from schemas.user import CurrentUser
 from schemas.part import PartCreate
 from models.tables_models import OrderParts, Order
 
@@ -12,14 +12,14 @@ async def get_orders(db):
         for order in orders
     ]
 
-async def assign_master(db, order_id: int, master: UserBase):
+async def assign_master(db, order_id: int, master: CurrentUser):
     update_data = {
         'master_id': master.id,
         'status': 'IN_PROGRESS'
     }
     await master_repo.claim_new_order(db, order_id, update_data)
 
-async def assign_parts(db, order_id: int, master: UserBase, parts: PartCreate):
+async def assign_parts(db, order_id: int, master: CurrentUser, parts: PartCreate):
     part_price = await master_repo.update_part_quantity(db, parts.part_id, parts.quantity)
     
     new_order_parts = OrderParts(
@@ -33,7 +33,7 @@ async def assign_parts(db, order_id: int, master: UserBase, parts: PartCreate):
     await master_repo.update_order(db, order_id, master.id, update_data)
     await master_repo.create_order_parts(db, new_order_parts)
 
-async def place_an_order(db, order_id: int, work_price: int, master: UserBase):
+async def place_an_order(db, order_id: int, work_price: int, master: CurrentUser):
     update_data = {
         'status': 'READY',
         'total_price': Order.total_price + work_price
@@ -42,7 +42,7 @@ async def place_an_order(db, order_id: int, work_price: int, master: UserBase):
 
     return OrderResponse.model_validate(final_order)
     
-async def view_my_orders(db, master: UserBase):
+async def view_my_orders(db, master: CurrentUser):
     my_orders = await master_repo.get_my_orders(db, master.id)
     return [
         OrderResponse.model_validate(order)

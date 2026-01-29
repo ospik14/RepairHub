@@ -18,17 +18,25 @@ async def authenticate_user(db, user_form):
         'type': 'access'
     }
 
-    access_token = create_token(payload, timedelta(minutes=20))
+    access_data = create_token(payload, timedelta(minutes=20))
 
     payload.pop('role')
     payload.update({'type': 'refresh'})
 
-    refresh_token = create_token(payload, timedelta(days=30))
-    await create_refresh_token(db, RefreshToken(**refresh_token.model_dump()))
+    refresh_data = create_token(payload, timedelta(days=30))
+    
+    refresh_token= RefreshToken(
+        user_id = current_user.id,
+        token = refresh_data.token,
+        role = current_user.role,
+        expires_at = refresh_data.expires_at
+    )
+
+    await create_refresh_token(db, refresh_token)
 
 
     return {
-        'access_token': access_token.token,
+        'access_token': access_data.token,
         'refresh_token': refresh_token.token
     }
     

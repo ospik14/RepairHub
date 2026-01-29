@@ -1,4 +1,7 @@
+import os
+from pathlib import Path
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from routers import manager, master, admin, auth
 from core.exceptions import EntityConflict, InvalidCredentialsError
@@ -17,3 +20,10 @@ async def conflict_handler(request, exc):
 @app.exception_handler(InvalidCredentialsError)
 async def authentication_failed(request, exc):
     return JSONResponse(status_code=401, content={'detail': str(exc)})
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+FRONTEND_DIR = BASE_DIR / 'frontend'
+
+print(FRONTEND_DIR)
+
+app.mount('/', StaticFiles(directory=FRONTEND_DIR, html=True), name='frontend')
