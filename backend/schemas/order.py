@@ -27,11 +27,16 @@ class OrderBase(BaseModel):
 class OrderCreate(OrderBase):
     pass
 
-class OrderResponse(OrderBase):
+class OrderCreateResponse(OrderBase):
     id: int
     created_at: datetime
     master_id: int | None 
     status: Status 
+
+    class Config:
+        from_attributes = True
+
+class OrderResponse(OrderCreateResponse):
     device: DeviceRef | None = None
 
     class Config:

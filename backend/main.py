@@ -24,6 +24,5 @@ async def authentication_failed(request, exc):
 BASE_DIR = Path(__file__).resolve().parent.parent
 FRONTEND_DIR = BASE_DIR / 'frontend'
 
-print(FRONTEND_DIR)
 
 app.mount('/', StaticFiles(directory=FRONTEND_DIR, html=True), name='frontend')

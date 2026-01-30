@@ -86,12 +86,12 @@
 
             <ul class="nav nav-pills mb-4" id="pills-tab">
                 <li class="nav-item">
-                    <button class="nav-link active fw-bold" onclick="loadOrders('available')">
+                    <button id="btn-available" class="nav-link active fw-bold" onclick="loadOrders('available')">
                         <i class="fa-solid fa-inbox me-2"></i>Нові замовлення
                     </button>
                 </li>
                 <li class="nav-item ms-2">
-                    <button class="nav-link fw-bold" onclick="loadOrders('my')">
+                    <button id="btn-my" class="nav-link fw-bold" onclick="loadOrders('my')">
                         <i class="fa-solid fa-hammer me-2"></i>Моя робота
                     </button>
                 </li>
@@ -105,7 +105,58 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="finishModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-dark-blue text-white">
+                <h5 class="modal-title fw-bold"><i class="fa-solid fa-check-circle me-2"></i>Завершення замовлення</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <h6 class="fw-bold text-primary mb-3">🛠️ Використані запчастини</h6>
+<div class="bg-light p-3 rounded mb-4 border">
+    <div class="mb-2">
+        <label class="small text-muted mb-1">Пошук запчастини</label>
+        
+        <input class="form-control mb-2" list="datalistOptions" id="part-search" placeholder="Почни вводити (напр. Дисплей...)">
+        <datalist id="datalistOptions">
+            </datalist>
 
+        <div class="d-flex gap-2">
+            <div class="input-group" style="width: 150px;">
+                <span class="input-group-text">К-сть</span>
+                <input type="number" id="part-qty" class="form-control" value="1" min="1">
+            </div>
+            
+            <button class="btn btn-primary flex-grow-1" onclick="addPart()">
+                <i class="fa-solid fa-plus"></i> Додати
+            </button>
+        </div>
+    </div>
+    <small id="part-msg" class="text-success d-none fw-bold"><i class="fa-solid fa-check"></i> Запчастину списано!</small>
+</div>
+
+                <hr>
+
+                <h6 class="fw-bold text-success mb-3">💰 Вартість роботи майстра</h6>
+                <div class="mb-3">
+                    <label class="form-label small text-muted">Введи суму, яку ти береш за свої послуги (без урахування деталей)</label>
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text bg-success text-white border-0">₴</span>
+                        <input type="number" id="work-price" class="form-control fw-bold" placeholder="0.00">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light text-muted" data-bs-dismiss="modal">Скасувати</button>
+                <button type="button" class="btn btn-success px-4 fw-bold shadow-sm" onclick="finishOrder()">
+                    ✅ Закрити замовлення
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

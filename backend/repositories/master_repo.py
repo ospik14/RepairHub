@@ -81,3 +81,11 @@ async def get_my_orders(db: AsyncSession, master_id):
     await db.commit()
 
     return orders.scalars().all()
+
+async def get_parts(db: AsyncSession):
+    query = (select(Part).where(Part.quantity > 0))
+
+    parts = await db.execute(query)
+    await db.commit()
+
+    return parts.scalars().all()

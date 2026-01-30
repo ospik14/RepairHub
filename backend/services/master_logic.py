@@ -1,7 +1,7 @@
 from repositories import master_repo
-from schemas.order import OrderResponse
+from schemas.order import OrderCreateResponse, OrderResponse
 from schemas.user import CurrentUser
-from schemas.part import PartCreate
+from schemas.part import PartCreate, PartResponse
 from models.tables_models import OrderParts, Order
 
 async def get_orders(db):
@@ -40,11 +40,19 @@ async def place_an_order(db, order_id: int, work_price: int, master: CurrentUser
     }
     final_order = await master_repo.update_order(db, order_id, master.id, update_data)
 
-    return OrderResponse.model_validate(final_order)
+    return OrderCreateResponse.model_validate(final_order)
     
 async def view_my_orders(db, master: CurrentUser):
     my_orders = await master_repo.get_my_orders(db, master.id)
     return [
         OrderResponse.model_validate(order)
         for order in my_orders
+    ]
+
+async def find_parts(db):
+    parts = await master_repo.get_parts(db)
+
+    return [
+        PartResponse.model_validate(part)
+        for part in parts
     ]
