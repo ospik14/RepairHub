@@ -96,11 +96,20 @@ window.loadOrders = async function(type) {
 
         const orders = await res.json();
         renderOrders(orders, type);
-        
+        let statElem
+
         if(type === 'available') {
-            const statElem = document.getElementById('stat-available');
+            statElem = document.getElementById('stat-available');
             if(statElem) statElem.textContent = orders.length;
+        } else {
+            statElem = document.getElementById('stat-in-progress');
+            if(statElem) {
+                const activeOrders = orders.filter(o => o.status === 'in_progress').length;
+                statElem.textContent = activeOrders;
+            }
         }
+
+        
 
     } catch (e) {
         ordersContainer.innerHTML = `<div class="alert alert-danger w-100">Помилка завантаження: ${e.message}</div>`;
@@ -177,7 +186,7 @@ function renderOrders(orders, type) {
 });
 }
 
-// Функція-заглушка для взяття замовлення
+
 window.takeOrder = async (id) => {
     // 1. Питаємо підтвердження (UX)
     if(!confirm('Взяти це замовлення в роботу?')) return;
@@ -282,13 +291,14 @@ window.loadPartsList = async function() {
         
         if (!res.ok) throw new Error('Не вдалося завантажити список деталей');
 
-        allParts = await res.json(); // Зберігаємо в пам'ять
+        allParts = await res.json();
+         // Зберігаємо в пам'ять
 
         // Малюємо <option> для кожного товару
         allParts.forEach(part => {
             const option = document.createElement('option');
             // У value пишемо назву, щоб юзер бачив текст
-            option.value = part.name; 
+            option.value = part.name;
             // Додатково показуємо ціну і залишок як підказку
             option.label = `${part.name} | Ціна: ${part.sell_price} грн | Залишок: ${part.quantity}`;
             datalist.appendChild(option);

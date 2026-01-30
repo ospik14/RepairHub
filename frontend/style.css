@@ -2,6 +2,7 @@
 body {
     font-family: 'Inter', sans-serif;
     background-color: #f4f7f6; /* Світло-сірий фон "SaaS" */
+    
 }
 
 /* Кольори */
@@ -72,3 +73,13 @@ body {
 
 /* Утиліти */
 .d-none { display: none !important; }
+
+#stat-container {
+    display: flex;
+    justify-content: center;
+}
+
+#pills-tab {
+    display: flex;
+    justify-content: center;
+}
