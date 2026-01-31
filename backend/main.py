@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from routers import manager, master, admin, auth
 from core.exceptions import EntityConflict, InvalidCredentialsError
 
@@ -25,4 +25,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 FRONTEND_DIR = BASE_DIR / 'frontend'
 
 
-app.mount('/', StaticFiles(directory=FRONTEND_DIR, html=True), name='frontend')
+app.mount("/css", StaticFiles(directory=FRONTEND_DIR / "css"), name="css")
+app.mount("/js", StaticFiles(directory=FRONTEND_DIR / "js"), name="js")
+
+
+@app.get("/")
+async def read_root():
+    return FileResponse(FRONTEND_DIR / "auth.html")
+
+@app.get("/master")
+async def read_master():
+    return FileResponse(FRONTEND_DIR / "master.html")
+
+@app.get("/manager")
+async def read_manager():
+    return FileResponse(FRONTEND_DIR / "manager.html")

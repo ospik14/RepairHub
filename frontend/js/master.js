@@ -4,52 +4,9 @@ const API_URL = "";
 // Елементи DOM
 const loginScreen = document.getElementById('login-screen');
 const dashboardScreen = document.getElementById('dashboard-screen');
-const loginForm = document.getElementById('loginForm');
-const errorMsg = document.getElementById('error-msg');
 const ordersContainer = document.getElementById('orders-container');
 
-// 🚀 1. Перевірка авторизації при старті
-window.addEventListener('load', () => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-        showDashboard();
-    }
-});
 
-// 🔐 2. Логіка Входу (Login)
-loginForm.onsubmit = async (e) => {
-    e.preventDefault();
-    errorMsg.classList.add('d-none');
-
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-
-    const formData = new URLSearchParams();
-    formData.append('username', username);
-    formData.append('password', password);
-
-    try {
-        const res = await fetch(`${API_URL}/auth/token`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: formData
-        });
-
-        if (!res.ok) throw new Error('Невірний логін або пароль');
-
-        const data = await res.json();
-        
-        // Зберігаємо токен
-        localStorage.setItem('access_token', data.access_token);
-        localStorage.setItem('username', username);
-        
-        showDashboard();
-
-    } catch (err) {
-        errorMsg.textContent = err.message;
-        errorMsg.classList.remove('d-none');
-    }
-};
 
 // 🖥️ 3. Перемикання екранів + Завантаження даних
 function showDashboard() {
@@ -65,7 +22,7 @@ function showDashboard() {
 window.logout = function() { // робимо глобальною функцією
     localStorage.removeItem('access_token');
     localStorage.removeItem('username');
-    location.reload();
+    window.location.href = '/';
 }
 
 // 📦 5. Завантаження замовлень (Available або My)

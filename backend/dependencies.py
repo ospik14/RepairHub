@@ -11,7 +11,7 @@ oauth_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
 
 def get_current_user(token: Annotated[str, Depends(oauth_bearer)]):
     payload = decode_token(token)
-
+    
     if payload.type != 'access':
         raise InvalidCredentialsError('Невірний тип токену')
     

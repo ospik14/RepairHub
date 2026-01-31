@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>RepairHub | Менеджер</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-dark bg-dark-blue mb-4">
+        <div class="container">
+            <span class="navbar-brand fw-bold"><i class="fa-solid fa-user-tie me-2"></i>Кабінет Менеджера</span>
+            <button class="btn btn-outline-light btn-sm" onclick="logout()">Вихід</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body p-5">
+                        <h4 class="mb-4 fw-bold text-center">🆕 Нове замовлення</h4>
+                        
+                        <div class="step-section mb-4 position-relative">
+                            <span class="badge bg-primary position-absolute top-0 start-0 translate-middle p-2 rounded-circle">1</span>
+                            <h5 class="text-primary border-bottom pb-2 ms-3">👤 Клієнт</h5>
+                            
+                            <div class="row g-3 mt-1">
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted">Номер телефону</label>
+                                    <input type="text" id="client-phone" class="form-control fw-bold" placeholder="0991234567" onblur="searchClientByPhone()">
+                                    <small id="client-status" class="text-muted"></small>
+                                </div>
+                                <div class="col-md-6"></div> <div class="col-md-6">
+                                    <label class="form-label small text-muted">Ім'я</label>
+                                    <input type="text" id="client-first-name" class="form-control">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted">Прізвище</label>
+                                    <input type="text" id="client-last-name" class="form-control">
+                                </div>
+                            </div>
+                            <input type="hidden" id="client-id"> 
+                        </div>
+
+                        <div class="step-section mb-4 position-relative">
+                            <span class="badge bg-primary position-absolute top-0 start-0 translate-middle p-2 rounded-circle">2</span>
+                            <h5 class="text-primary border-bottom pb-2 ms-3">📱 Девайс</h5>
+                            
+                            <div class="row g-3 mt-1">
+                                <div class="col-12">
+                                    <label class="form-label small text-muted">Модель (Вибери або введи нову)</label>
+                                    <input class="form-control" list="deviceOptions" id="device-model" placeholder="Пошук девайса..." onchange="checkDeviceSelect()">
+                                    <datalist id="deviceOptions">
+                                        </datalist>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted">Тип (Телефон, Ноут...)</label>
+                                    <select id="device-type" class="form-select">
+                                        <option value="Smartphone">Смартфон</option>
+                                        <option value="Laptop">Ноутбук</option>
+                                        <option value="Tablet">Планшет</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted">Серійний номер / IMEI</label>
+                                    <input type="text" id="device-sn" class="form-control">
+                                </div>
+                            </div>
+                            <input type="hidden" id="device-id">
+                        </div>
+
+                        <div class="step-section mb-4 position-relative">
+                            <span class="badge bg-primary position-absolute top-0 start-0 translate-middle p-2 rounded-circle">3</span>
+                            <h5 class="text-primary border-bottom pb-2 ms-3">🛠️ Деталі ремонту</h5>
+                            
+                            <div class="mb-3 mt-3">
+                                <label class="form-label small text-muted">Опис проблеми</label>
+                                <textarea id="order-desc" class="form-control" rows="3" placeholder="Розбитий екран, не включається..."></textarea>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-success w-100 py-3 fw-bold shadow btn-animate" onclick="createFullOrder()">
+                            ✅ Створити замовлення
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/manager.js"></script>
+</body>
+</html>
