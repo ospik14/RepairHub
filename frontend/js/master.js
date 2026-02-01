@@ -2,21 +2,51 @@
 const API_URL = ""; 
 
 // Елементи DOM
-const loginScreen = document.getElementById('login-screen');
-const dashboardScreen = document.getElementById('dashboard-screen');
 const ordersContainer = document.getElementById('orders-container');
 
 
 
 // 🖥️ 3. Перемикання екранів + Завантаження даних
-function showDashboard() {
-    loginScreen.classList.add('d-none');
-    dashboardScreen.classList.remove('d-none');
-    document.getElementById('user-name').textContent = localStorage.getItem('username');
+document.addEventListener('DOMContentLoaded', async () => {
+    const token = localStorage.getItem('access_token');
     
-    // За замовчуванням вантажимо доступні замовлення
+    // Перевірка безпеки: якщо токена немає — кидаємо на вхід
+    if (!token) {
+        window.location.href = '/'; 
+        return;
+    }
+
+    // Вставляємо ім'я користувача в хедер
+    const userElem = document.getElementById('user-name');
+    if (userElem) {
+        userElem.textContent = localStorage.getItem('username') || 'Майстер';
+    }
+
+    // Ініціалізуємо модалку Bootstrap (щоб потім відкривати/закривати через JS)
+    const modalEl = document.getElementById('finishModal');
+    if (modalEl) {
+        finishModal = new bootstrap.Modal(modalEl);
+    }
+
+    // Одразу вантажимо замовлення
     loadOrders('available');
-}
+
+    try {
+        const res = await fetch(`${API_URL}/master/orders/my`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+            const myOrders = await res.json();
+            // Рахуємо тільки ті, що в роботі
+            const activeCount = myOrders.filter(o => o.status === 'in_progress').length;
+            // Оновлюємо цифру
+            const statElem = document.getElementById('stat-in-progress');
+            if (statElem) statElem.textContent = activeCount;
+        }
+    } catch (e) {
+        console.error("Не вдалося оновити фоновий лічильник", e);
+    }
+});
 
 // 🚪 4. Вихід
 window.logout = function() { // робимо глобальною функцією
