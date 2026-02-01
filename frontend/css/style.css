@@ -83,3 +83,44 @@ body {
     display: flex;
     justify-content: center;
 }
+
+.bg-light-success {
+    background-color: #d1e7dd;
+}
+.rounded-pill {
+    border-radius: 50rem !important;
+}
+
+/* Стилі самого чека (виглядає як чек з Сільпо) */
+.receipt {
+    width: 300px; /* Ширина термострічки */
+    margin: 0 auto;
+    font-family: 'Courier New', monospace; /* Моноширинний шрифт як в чеку */
+    padding: 10px;
+    border: 1px solid #ddd; /* Рамка тільки для тесту */
+}
+
+/* МАГІЯ ДРУКУ */
+@media print {
+    /* Ховаємо ВСЕ на сторінці */
+    body * {
+        visibility: hidden;
+    }
+    
+    /* Показуємо тільки область друку */
+    #receipt-print-area, #receipt-print-area * {
+        visibility: visible;
+        display: block !important;
+    }
+
+    /* Позиціонуємо чек в лівому верхньому куті аркуша */
+    #receipt-print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+    
+    /* Прибираємо кнопки і модалки */
+    .modal { display: none !important; }
+}

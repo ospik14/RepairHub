@@ -4,7 +4,8 @@ from dependencies import db_dep, user_dep
 from schemas.client import ClientCreate, ClientSearch
 from schemas.device import DeviceCreate
 from schemas.order import OrderCreate
-from services.manager_logic import register_client, find_client, add_device, find_devices, new_order
+from services.manager_logic import register_client, find_client, add_device, \
+find_devices, new_order, find_orders, place_an_order
 
 router = APIRouter(
     prefix='/manager',
@@ -30,3 +31,11 @@ async def search_devices(db: db_dep, client_id: int, manager: user_dep):
 @router.post('/orders')
 async def create_order(db: db_dep, order: OrderCreate, manager: user_dep):
     return await new_order(db, order)
+
+@router.post('/orders/ready')
+async def get_ready_orders(db: db_dep, client: ClientSearch, manager: user_dep):
+    return await find_orders(db, client.phone)
+
+@router.patch('/orders/{order_id}/complete')
+async def update_status(db: db_dep, order_id: int, manager: user_dep):
+    return await place_an_order(db, order_id)

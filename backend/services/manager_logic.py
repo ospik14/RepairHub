@@ -2,7 +2,7 @@ from repositories import manager_repo
 from models.tables_models import Client, Device, Order, Status
 from schemas.client import ClientResponse, ClientCreate
 from schemas.device import DeviceResponse, DeviceCreate
-from schemas.order import OrderCreateResponse, OrderCreate
+from schemas.order import OrderCreateResponse, OrderCreate, OrderResponse
 
 async def register_client(db, client_request: ClientCreate):
     client = Client(**client_request.model_dump())
@@ -42,3 +42,17 @@ async def new_order(db, order_request: OrderCreate):
     
 
     return OrderCreateResponse.model_validate(new_order)
+
+async def find_orders(db, phone: str):
+    orders = await manager_repo.get_orders_by_pnone(db, phone)
+
+    return [
+        OrderResponse.model_validate(order)
+        for order in orders
+    ]
+
+async def place_an_order(db, order_id: int):
+    await manager_repo.update_status(db, order_id)
+    order = await manager_repo.get_order_by_id(db, order_id)
+
+    return OrderResponse.model_validate(order)

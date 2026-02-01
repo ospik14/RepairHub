@@ -5,6 +5,7 @@ from models.tables_models import Status
 class ClientRef(BaseModel):
     first_name: str
     last_name: str
+    phone: str
 
     class Config:
         from_attributes = True
@@ -13,6 +14,7 @@ class DeviceRef(BaseModel):
     id: int
     client_id: int
     model: str
+    serial_number: str
     client: ClientRef | None = None
 
     class Config:

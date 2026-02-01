@@ -127,7 +127,7 @@ function renderOrders(orders, type) {
         // Варіант 1: Замовлення нічиє -> "Взяти"
         actionButton = `<button class="btn btn-primary w-100" onclick="takeOrder(${order.id})">🖐 Взяти в роботу</button>`;
     } 
-    else if (order.status === 'ready') {
+    else if (order.status === 'ready' || order.status === 'completed') {
         // Варіант 3: Замовлення вже готове -> "Виконано" (Неактивна сіра кнопка)
         actionButton = `
             <button class="btn btn-secondary w-100" disabled>

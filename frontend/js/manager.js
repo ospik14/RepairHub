@@ -2,6 +2,18 @@ const API_URL = "";
 // Зберігаємо знайдені девайси, щоб дістати з них ID
 let foundDevices = []; 
 
+
+window.switchTab = function(tabName) {
+    // Кнопки
+    document.getElementById('tab-create').classList.remove('active');
+    document.getElementById('tab-pickup').classList.remove('active');
+    document.getElementById(`tab-${tabName}`).classList.add('active');
+
+    // Секції
+    document.getElementById('section-create').classList.add('d-none');
+    document.getElementById('section-pickup').classList.add('d-none');
+    document.getElementById(`section-${tabName}`).classList.remove('d-none');
+}
 // 1. 🔍 ПОШУК КЛІЄНТА ПО ТЕЛЕФОНУ
 // js/manager.js
 
@@ -189,7 +201,7 @@ async function createFullOrder() {
     }
 }
 
-// ✅ Додай це десь в кінці файлу або після loadOrders
+
 function setupFormListeners() {
     const phoneInput = document.getElementById('client-phone');
     
@@ -221,8 +233,192 @@ document.addEventListener('DOMContentLoaded', () => {
     // ... твій існуючий код ...
     setupFormListeners(); // <--- ДОДАЙ ЦЕ
 });
-// Вихід
-window.logout = function() {
+
+// 1. Пошук замовлень клієнта
+window.searchOrdersForPickup = async function() {
+    const phone = document.getElementById('pickup-search-phone').value.trim();
+    const container = document.getElementById('pickup-results');
+
+    if (phone.length < 10) {
+        alert("Введи коректний номер телефону!");
+        return;
+    }
+
+    const token = localStorage.getItem('access_token');
+    container.innerHTML = '<div class="text-center w-100"><i class="fa-solid fa-spinner fa-spin fa-2x text-primary"></i></div>';
+
+    try {
+        // У тебе роут: @router.post('/orders/ready')
+        // Перевір в main.py, який префікс у менеджера (скоріш за все /manager)
+        const res = await fetch(`${API_URL}/manager/orders/ready`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ phone: phone })
+        });
+
+        if (!res.ok) {
+            if (res.status === 404) {
+                container.innerHTML = '<div class="alert alert-warning w-100">Замовлень не знайдено</div>';
+                return;
+            }
+            throw new Error('Помилка пошуку');
+        }
+
+        const orders = await res.json();
+        renderPickupOrders(orders);
+
+    } catch (e) {
+        container.innerHTML = `<div class="alert alert-danger w-100">Помилка: ${e.message}</div>`;
+    }
+}
+
+// 2. Малювання списку замовлень
+function renderPickupOrders(orders) {
+    const container = document.getElementById('pickup-results');
+    
+    if (orders.length === 0) {
+        container.innerHTML = '<div class="alert alert-info w-100">У цього клієнта немає активних замовлень.</div>';
+        return;
+    }
+
+    container.innerHTML = '';
+
+    orders.forEach(order => {
+        // Визначаємо вигляд залежно від статусу
+        let statusBadge = '';
+        let actionBlock = '';
+        let borderClass = '';
+
+        if (order.status === 'ready') {
+            // ✅ ГОТОВО ДО ВИДАЧІ (Майстер зробив)
+            borderClass = 'border-success';
+            statusBadge = '<span class="badge bg-success">ГОТОВО ДО ВИДАЧІ</span>';
+            actionBlock = `
+                <div class="mt-3 p-3 bg-light-success rounded border border-success">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted">До сплати:</span>
+                        <h3 class="fw-bold text-success mb-0">${order.total_price} ₴</h3>
+                    </div>
+                    <button class="btn btn-success w-100 fw-bold shadow-sm" onclick="completeOrder(${order.id})">
+                        <i class="fa-solid fa-hand-holding-dollar"></i> Отримати кошти і закрити
+                    </button>
+                </div>
+            `;
+        } else if (order.status === 'new' || order.status === 'in_progress') {
+            // ⏳ ЩЕ В РОБОТІ
+            borderClass = 'border-warning';
+            statusBadge = `<span class="badge bg-warning text-dark">${order.status === 'new' ? 'НОВЕ' : 'В РОБОТІ'}</span>`;
+            actionBlock = `
+                <div class="mt-3">
+                    <button class="btn btn-secondary w-100" disabled>
+                        ⏳ Ще ремонтується
+                    </button>
+                </div>
+            `;
+        } else {
+            // 🏁 ВЖЕ ЗАКРИТО (Архіване)
+            borderClass = 'border-secondary opacity-75';
+            statusBadge = '<span class="badge bg-secondary">ВЖЕ ВИДАНО</span>';
+            actionBlock = `<div class="mt-3 text-center small text-muted">Замовлення закрите</div>`;
+        }
+
+        const card = `
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100 ${borderClass}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <small class="text-muted">#ID: ${order.id}</small>
+                        ${statusBadge}
+                    </div>
+                    <h5 class="card-title fw-bold">
+                        ${order.device ? `${order.device.model}` : 'Пристрій'}
+                    </h5>
+                    <p class="card-text text-muted small mb-2">
+                        SN: ${order.device ? order.device.serial_number : 'N/A'}
+                    </p>
+                    <div class="bg-light p-2 rounded small text-dark mb-2">
+                        Problem: ${order.description}
+                    </div>
+                    
+                    ${actionBlock}
+                </div>
+            </div>
+        </div>
+        `;
+        container.innerHTML += card;
+    });
+}
+
+// 3. Фіналізація (Клік на "Отримати кошти і закрити")
+let successModal;
+
+document.addEventListener('DOMContentLoaded', () => {
+    // ... твій існуючий код ...
+    
+    // Ініціалізація нової модалки
+    const modalEl = document.getElementById('successModal');
+    if (modalEl) successModal = new bootstrap.Modal(modalEl);
+});
+
+window.completeOrder = async function(orderId) {
+    if (!confirm("Підтвердити отримання коштів?")) return;
+
+    const token = localStorage.getItem('access_token');
+    
+    try {
+        const res = await fetch(`${API_URL}/manager/orders/${orderId}/complete`, {
+            method: 'PATCH',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            // 🔥 ЗАМІСТЬ ALERT -> ЗАПОВНЮЄМО ЧЕК І ВІДКРИВАЄМО МОДАЛКУ
+            
+            // Нам треба дані про замовлення. 
+            // Якщо у тебе є об'єкт order з попереднього кроку (renderPickupOrders),
+            // можна брати звідти. Або просто знайти в DOM.
+            // Для простоти, давай витягнемо з DOM (це трохи "костиль", але працює)
+            
+            // АБО правильніше: сервер повернув оновлений ордер? 
+            const updatedOrder = await res.json(); 
+            // Якщо твій бекенд повертає ордер після complete, то супер.
+            // Якщо ні — використовуй дані, які вже є на екрані.
+
+            // Припустимо, ти зробив return await db.refresh(order) на бекенді
+            if (updatedOrder) {
+                document.getElementById('r-id').textContent = updatedOrder.id;
+                document.getElementById('r-device').textContent = updatedOrder.device.model;
+                document.getElementById('r-client').textContent = `${updatedOrder.device.client.first_name} ${updatedOrder.device.client.last_name}`;
+                document.getElementById('r-finish-date').textContent = new Date().toLocaleDateString();
+                document.getElementById('r-date').textContent = updatedOrder.created_at.split('T')[0];
+                document.getElementById('r-desc').textContent = updatedOrder.description;
+                // Тут можна додати більше полів, якщо бекенд їх вертає
+                document.getElementById('r-price').textContent = updatedOrder.total_price;
+            }
+
+            // Відкриваємо красиве вікно
+            successModal.show();
+            
+            // Оновлюємо список на фоні
+            searchOrdersForPickup();
+        } else {
+            alert("Помилка завершення");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Помилка");
+    }
+}
+
+// Функція друку
+window.printReceipt = function() {
+    window.print(); // Викликає стандартне вікно друку браузера
+}
+
+window.logout = function() { // робимо глобальною функцією
     localStorage.removeItem('access_token');
     window.location.href = '/';
 }
