@@ -52,6 +52,8 @@ loginForm.onsubmit = async (e) => {
                 window.location.href = '/master'; // 👈 Редірект на сторінку майстра
             } else if (user.role === 'manager') {
                 window.location.href = '/manager'; // 👈 Редірект на менеджера
+            } else if (user.role == 'admin'){
+                window.location.href = '/admin';
             } else {
                 throw new Error('У вас немає доступу');
             }

@@ -39,7 +39,7 @@ class Device(Base):
     __tablename__= "devices"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    client_id: Mapped[int] = mapped_column(ForeignKey('clients.id'))
+    client_id: Mapped[int] = mapped_column(ForeignKey('clients.id', ondelete='CASCADE'))
     model: Mapped[str] = mapped_column(String(50))
     type: Mapped[str] = mapped_column(String(20))
     serial_number: Mapped[str | None] = mapped_column(String(255))
@@ -49,8 +49,8 @@ class Device(Base):
 class Order(Base):
     __tablename__= "orders"
     id: Mapped[int] = mapped_column(primary_key=True)
-    device_id: Mapped[int] = mapped_column(ForeignKey('devices.id'))
-    master_id: Mapped[int | None] = mapped_column(ForeignKey('users.id'))
+    device_id: Mapped[int] = mapped_column(ForeignKey('devices.id', ondelete='CASCADE'))
+    master_id: Mapped[int | None] = mapped_column(ForeignKey('users.id', ondelete='SET NULL'))
     status: Mapped[Status] = mapped_column(Enum(Status, native_enum=True))
     description: Mapped[str] = mapped_column(String(255))
     total_price: Mapped[float] = mapped_column(DECIMAL(10, 2))
@@ -70,7 +70,7 @@ class OrderParts(Base):
     __tablename__= "order_parts"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    order_id: Mapped[int] = mapped_column(ForeignKey('orders.id'))
+    order_id: Mapped[int] = mapped_column(ForeignKey('orders.id', ondelete='CASCADE'))
     part_id: Mapped[int] = mapped_column(ForeignKey('parts.id'))
     quantity: Mapped[int] = mapped_column(default=1)
     price: Mapped[float] = mapped_column(DECIMAL(10, 2))
@@ -79,7 +79,7 @@ class RefreshToken(Base):
     __tablename__="refresh_tokens"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
     token: Mapped[str]
     role: Mapped[UserRole] = mapped_column(Enum(UserRole, native_enum=True))
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))

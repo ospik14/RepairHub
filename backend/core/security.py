@@ -20,7 +20,10 @@ def hash_password_sync(password: str) -> str:
     return bcrypt_context.hash(password)
 
 def verify_password_sync(password: str, hashed_password: str):
-    return bcrypt_context.verify(password, hashed_password)
+    try:
+        return bcrypt_context.verify(password, hashed_password)
+    except:
+        raise InvalidCredentialsError
 
 async def hash_password(password: str) -> str:
     return await run_in_threadpool(hash_password_sync, password)

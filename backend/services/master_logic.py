@@ -1,7 +1,7 @@
 from repositories import master_repo
 from schemas.order import OrderCreateResponse, OrderResponse
 from schemas.user import CurrentUser
-from schemas.part import PartCreate, PartResponse
+from schemas.part import OrdersPartCreate, PartResponse
 from models.tables_models import OrderParts, Order
 
 async def get_orders(db):
@@ -19,7 +19,7 @@ async def assign_master(db, order_id: int, master: CurrentUser):
     }
     await master_repo.claim_new_order(db, order_id, update_data)
 
-async def assign_parts(db, order_id: int, master: CurrentUser, parts: PartCreate):
+async def assign_parts(db, order_id: int, master: CurrentUser, parts: OrdersPartCreate):
     part_price = await master_repo.update_part_quantity(db, parts.part_id, parts.quantity)
     
     new_order_parts = OrderParts(

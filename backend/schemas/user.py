@@ -6,8 +6,9 @@ class UserBase(BaseModel):
     role: UserRole
 
 class CreateUser(UserBase):
-    username: str
+    username: str = Field(max_length=30)
     password: str = Field(min_length=8, max_length=22)
+    
     pass
 
 class UserResponse(UserBase):
@@ -21,3 +22,6 @@ class UserResponse(UserBase):
 class CurrentUser(UserBase):
     id: int
     type: str
+
+class UserPassUpdate(BaseModel):
+    password: str = Field(min_length=8, max_length=22)

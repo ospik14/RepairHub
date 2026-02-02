@@ -40,3 +40,7 @@ async def read_master():
 @app.get("/manager")
 async def read_manager():
     return FileResponse(FRONTEND_DIR / "manager.html")
+
+@app.get("/admin")
+async def read_manager():
+    return FileResponse(FRONTEND_DIR / "admin.html")
