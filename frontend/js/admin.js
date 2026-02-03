@@ -112,7 +112,7 @@ async function createUser() {
             },
             body: JSON.stringify({ username, role, password })
         });
-        if (res.status === 401) { logout(); return; }
+        
         if (res.ok) {
             alert("Працівника створено!");
             bootstrap.Modal.getInstance(document.getElementById('addUserModal')).hide();
