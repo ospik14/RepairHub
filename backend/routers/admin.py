@@ -3,7 +3,7 @@ from schemas.user import CreateUser, UserPassUpdate
 from schemas.part import PartCreate, PartUpdate
 from dependencies import db_dep, user_dep
 from services.admin_logic import assign_user, view_all_users, release_user, \
-change_password, add_new_part, view_all_parts, change_part_data
+change_password, add_new_part, view_all_parts, change_part_data, orders_monthly_statistics
 
 router = APIRouter(
     prefix='/admin',
@@ -37,3 +37,7 @@ async def get_all_parts(db: db_dep, admin: user_dep):
 @router.post('/parts/{part_id}/update')
 async def update_part(db: db_dep, part_id: int, data: PartUpdate, admin: user_dep):
     return await change_part_data(db, part_id, data)
+
+@router.get('/orders/stat')
+async def get_monthly_stat(db: db_dep, admin: user_dep):
+    return await orders_monthly_statistics(db)

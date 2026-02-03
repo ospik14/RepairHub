@@ -52,7 +52,7 @@ async def find_orders(db, phone: str):
     ]
 
 async def place_an_order(db, order_id: int):
-    await manager_repo.update_status(db, order_id)
+    await manager_repo.update_order(db, order_id)
     order = await manager_repo.get_order_by_id(db, order_id)
 
     return OrderResponse.model_validate(order)

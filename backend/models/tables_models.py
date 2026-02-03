@@ -55,6 +55,7 @@ class Order(Base):
     description: Mapped[str] = mapped_column(String(255))
     total_price: Mapped[float] = mapped_column(DECIMAL(10, 2))
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     device: Mapped["Device"] = relationship("Device", back_populates="orders")
 
 class Part(Base):

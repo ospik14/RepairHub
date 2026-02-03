@@ -21,17 +21,25 @@ function logout() {
 }
 
 // ==========================================
-// 📊 СТАТИСТИКА (MOCK / ЗАГЛУШКИ)
+// 📊 СТАТИСТИКА 
 // ==========================================
-function loadMockStats() {
-    // Тут потім будуть fetch запити. Зараз просто малюємо красиві цифри.
-    document.getElementById('stat-money').textContent = '25 400 ₴';
-    document.getElementById('stat-orders').textContent = '142';
-    
-    // Можна навіть реальну кількість юзерів сюди вписати після loadUsers, 
-    // але поки хай буде статика
-    document.getElementById('stat-users').textContent = '5'; 
-    document.getElementById('stat-low-parts').textContent = '2'; // Типу 2 деталі закінчуються
+async function loadMockStats() {
+    const token = localStorage.getItem('access_token');
+    try {
+        const res = await fetch(`${API_URL}/admin/orders/stat`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        order_stat = await res.json()
+        if (res.status === 401) { logout(); return; }
+        if (res.ok) {
+            document.getElementById('stat-money').textContent = `${order_stat.earnings} ₴`;
+            document.getElementById('stat-orders').textContent = order_stat.complete_orders;
+        } else {
+            alert("помилка завантаження");
+        }
+    } catch (e) { console.error(e); }
 }
 
 // ==========================================
@@ -47,6 +55,7 @@ async function loadUsers() {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const users = await res.json();
+        if (res.status === 401) { logout(); return; }
 
         tbody.innerHTML = '';
         users.forEach(user => {
@@ -103,7 +112,7 @@ async function createUser() {
             },
             body: JSON.stringify({ username, role, password })
         });
-
+        if (res.status === 401) { logout(); return; }
         if (res.ok) {
             alert("Працівника створено!");
             bootstrap.Modal.getInstance(document.getElementById('addUserModal')).hide();
@@ -145,7 +154,7 @@ async function submitPassChange() {
         },
         body: JSON.stringify({ password: newPass })
     });
-
+    if (res.status === 401) { logout(); return; }
     if(res.ok) {
         alert("Пароль змінено!");
         bootstrap.Modal.getInstance(document.getElementById('changePassModal')).hide();
@@ -215,7 +224,7 @@ async function createPart() {
         headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
         body: JSON.stringify(data)
     });
-
+    if (res.status === 401) { logout(); return; }
     if(res.ok) {
         bootstrap.Modal.getInstance(document.getElementById('addPartModal')).hide();
         loadParts();

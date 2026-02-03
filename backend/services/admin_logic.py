@@ -1,8 +1,9 @@
 from schemas.user import CreateUser, UserResponse, UserPassUpdate
 from schemas.part import PartCreate, PartResponse, PartUpdate
+from schemas.order import OrderCreateResponse
 from models.tables_models import User, Part
 from repositories.admin_repo import create_user, get_users, delete_user, \
-update_user, create_part, get_parts, update_part
+update_user, create_part, get_parts, update_part, get_orders
 from core.security import hash_password
 
 async def assign_user(db, user: CreateUser):
@@ -54,3 +55,16 @@ async def change_part_data(db, part_id: int, part_update: PartUpdate):
     part = await update_part(db, part_id, data)
 
     return PartResponse.model_validate(part)
+
+async def orders_monthly_statistics(db):
+    result = await get_orders(db)
+    orders = [OrderCreateResponse.model_validate(order) for order in result]
+
+    earnings = 0
+    for order in orders:
+        earnings += order.total_price
+
+    return {
+        'earnings': earnings,
+        'complete_orders': len(orders)
+    }

@@ -1,7 +1,8 @@
-from sqlalchemy import select, delete, update
+from datetime import datetime, timedelta
+from sqlalchemy import select, delete, update, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
-from models.tables_models import User, Part
+from models.tables_models import User, Part, Order, Status
 from core.exceptions import EntityConflict
 from schemas.user import CreateUser
 from schemas.part import PartUpdate
@@ -77,3 +78,16 @@ async def update_part(db: AsyncSession, part_id: int, data: PartUpdate):
         raise EntityConflict('Такої запчастини не існує')  
 
     return part
+
+async def get_orders(db: AsyncSession):
+    query = (
+        select(Order)
+        .where(
+            Order.status == Status.COMPLETED,
+            func.date_trunc('month', Order.completed_at)
+            == func.date_trunc('month', func.now())
+        )
+    )
+    orders = await db.execute(query)
+
+    return orders.scalars().all()

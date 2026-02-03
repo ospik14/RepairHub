@@ -258,7 +258,7 @@ window.searchOrdersForPickup = async function() {
             },
             body: JSON.stringify({ phone: phone })
         });
-
+        if (res.status === 401) { logout(); return; }
         if (!res.ok) {
             if (res.status === 404) {
                 container.innerHTML = '<div class="alert alert-warning w-100">Замовлень не знайдено</div>';
@@ -373,7 +373,7 @@ window.completeOrder = async function(orderId) {
             method: 'PATCH',
             headers: { 'Authorization': `Bearer ${token}` }
         });
-
+        if (res.status === 401) { logout(); return; }
         if (res.ok) {
             // 🔥 ЗАМІСТЬ ALERT -> ЗАПОВНЮЄМО ЧЕК І ВІДКРИВАЄМО МОДАЛКУ
             

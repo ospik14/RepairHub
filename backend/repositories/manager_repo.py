@@ -1,4 +1,4 @@
-from sqlalchemy import select, update
+from sqlalchemy import func, select, update
 from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
@@ -54,17 +54,18 @@ async def get_orders_by_pnone(db: AsyncSession, phone: str):
 
     return orders
 
-async def update_status(db: AsyncSession, order_id: int):
+async def update_order(db: AsyncSession, order_id: int):
     stmt = (
         update(Order)
         .where(Order.id == order_id, Order.status == Status.READY)
-        .values(status = Status.COMPLETED)
+        .values(status = Status.COMPLETED, completed_at = func.now())
     )
     result = await db.execute(stmt)
-    await db.commit()
 
     if result.rowcount == 0:
         raise EntityConflict('Замовлення не доступне!')
+    
+    await db.commit()
 
 async def get_order_by_id(db: AsyncSession, order_id: int):
     query = (
