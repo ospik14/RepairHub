@@ -370,7 +370,7 @@ window.finishOrder = async function() {
         // 2. Відправляємо запит на сервер
         // Зверни увагу: у твоєму Python коді це GET запит з параметром work_price
         const res = await fetch(`${API_URL}/master/orders/${currentOrderId}/finish?work_price=${workPrice}`, {
-            method: 'GET', // Твій бекенд очікує GET
+            method: 'PATCH', // Твій бекенд очікує GET
             headers: {
                 'Authorization': `Bearer ${token}`
             }

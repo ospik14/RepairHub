@@ -31,5 +31,4 @@ async def refresh(db: db_dep, request: Request):
 
 @router.get('/users/me')
 async def get_me(user: user_dep):
-    print(user)
     return user
