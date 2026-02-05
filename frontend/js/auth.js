@@ -1,15 +1,30 @@
-// js/auth.js
 const API_URL = ""; 
 
 const loginForm = document.getElementById('loginForm');
 const errorMsg = document.getElementById('error-msg');
 
-// Перевірка: якщо ми вже залогінені, кидаємо на сторінку (спрощено)
-window.addEventListener('load', () => {
-    if (localStorage.getItem('access_token')) {
-        // Тут можна додати запит на /users/me, щоб знати куди кинути, 
-        // але поки лишимо користувача на логіні або перекинемо на master.html за замовчуванням
-        // window.location.href = 'master.html'; 
+window.addEventListener('load', async () => {
+    const token = localStorage.getItem('access_token')
+    if (token) {
+        const userRes = await fetch(`${API_URL}/auth/users/me`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (userRes.ok) {
+            const user = await userRes.json();
+            
+            if (user.role === 'master') {
+                window.location.href = '/master'; 
+            } else if (user.role === 'manager') {
+                window.location.href = '/manager'; 
+            } else if (user.role == 'admin'){
+                window.location.href = '/admin';
+            } else {
+                throw new Error('У вас немає доступу');
+            }
+        } else {
+            throw new Error('Не вдалося отримати дані користувача');
+        }
     }
 });
 
@@ -25,7 +40,6 @@ loginForm.onsubmit = async (e) => {
     formData.append('password', password);
 
     try {
-        // 1. Отримуємо токен
         const res = await fetch(`${API_URL}/auth/token`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -36,11 +50,10 @@ loginForm.onsubmit = async (e) => {
 
         const data = await res.json();
         
-        // 2. Зберігаємо дані
         localStorage.setItem('access_token', data.access_token);
         localStorage.setItem('username', username);
 
-        // 3. 🔥 ВАЖЛИВО: Дізнаємось роль, щоб знати, куди перенаправити
+        
         const userRes = await fetch(`${API_URL}/auth/users/me`, {
             headers: { 'Authorization': `Bearer ${data.access_token}` }
         });
@@ -49,9 +62,9 @@ loginForm.onsubmit = async (e) => {
             const user = await userRes.json();
             
             if (user.role === 'master') {
-                window.location.href = '/master'; // 👈 Редірект на сторінку майстра
+                window.location.href = '/master'; 
             } else if (user.role === 'manager') {
-                window.location.href = '/manager'; // 👈 Редірект на менеджера
+                window.location.href = '/manager';
             } else if (user.role == 'admin'){
                 window.location.href = '/admin';
             } else {

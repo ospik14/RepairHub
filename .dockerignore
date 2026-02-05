@@ -6,6 +6,9 @@ venv/
 .venv/
 env/
 
+.git/
+.gitignore
+
 .env
 .env.local
 

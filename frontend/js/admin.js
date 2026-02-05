@@ -7,10 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // 1. Вантажимо "фейкову" статистику (поки бекенд не готовий)
     loadMockStats();
-
-    // 2. Вантажимо реальні дані
     loadUsers();
     loadParts();
 });
@@ -20,9 +17,8 @@ function logout() {
     window.location.href = '/';
 }
 
-// ==========================================
-// 📊 СТАТИСТИКА 
-// ==========================================
+
+// СТАТИСТИКА 
 async function loadMockStats() {
     const token = localStorage.getItem('access_token');
     try {
@@ -42,9 +38,7 @@ async function loadMockStats() {
     } catch (e) { console.error(e); }
 }
 
-// ==========================================
-// 👥 КОРИСТУВАЧІ (USERS)
-// ==========================================
+// КОРИСТУВАЧІ (USERS)
 
 async function loadUsers() {
     const token = localStorage.getItem('access_token');
@@ -59,7 +53,6 @@ async function loadUsers() {
 
         tbody.innerHTML = '';
         users.forEach(user => {
-            // Переклад ролей для краси
             let roleName = user.role;
             let badgeClass = 'bg-secondary';
             if(user.role === 'admin') { roleName = 'Адмін'; badgeClass = 'bg-danger'; }
@@ -85,7 +78,6 @@ async function loadUsers() {
             tbody.innerHTML += row;
         });
 
-        // Оновимо лічильник персоналу в статистиці (бо чому б і ні?)
         document.getElementById('stat-users').textContent = users.length;
 
     } catch (e) {
@@ -96,14 +88,11 @@ async function loadUsers() {
 async function createUser() {
     const username = document.getElementById('new-username').value;
     const role = document.getElementById('new-role').value;
-    const password = document.getElementById('new-password').value; // ТРЕБА, навіть якщо в схемі явно не видно
+    const password = document.getElementById('new-password').value; 
 
     const token = localStorage.getItem('access_token');
     
     try {
-        // Увага: Твоя схема CreateUser в prompt не мала password, 
-        // але створити юзера без пароля неможливо для логіну.
-        // Я відправляю його. Якщо бекенд ігнорує - перевір schemas.py.
         const res = await fetch(`${API_URL}/admin/users`, {
             method: 'POST',
             headers: {
@@ -134,7 +123,6 @@ async function deleteUser(userId) {
     loadUsers();
 }
 
-// Зміна паролю
 function openPassModal(userId) {
     document.getElementById('pass-user-id').value = userId;
     document.getElementById('update-password').value = '';
@@ -163,9 +151,7 @@ async function submitPassChange() {
     }
 }
 
-// ==========================================
-// 📦 ЗАПЧАСТИНИ (PARTS)
-// ==========================================
+// ЗАПЧАСТИНИ (PARTS)
 
 async function loadParts() {
     const token = localStorage.getItem('access_token');
@@ -203,7 +189,6 @@ async function loadParts() {
             tbody.innerHTML += row;
         });
         
-        // Оновлюємо "фейкову" статистику реальними даними про дефіцит
         document.getElementById('stat-low-parts').textContent = lowStock;
 
     } catch (e) { console.error(e); }
@@ -233,7 +218,7 @@ async function createPart() {
     }
 }
 
-// Редагування
+
 function openEditPart(id, qty, buy, sell) {
     document.getElementById('edit-part-id').value = id;
     document.getElementById('edit-part-qty').value = qty;
@@ -252,7 +237,6 @@ async function submitPartEdit() {
     };
 
     const token = localStorage.getItem('access_token');
-    // Зверни увагу на слеш перед parts: /parts/...
     const res = await fetch(`${API_URL}/admin/parts/${id}/update`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
