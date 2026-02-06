@@ -3,7 +3,8 @@
 <p align="center">
   <img src="assets/logo.png" width="200" alt="RepairHub Logo">
 </p>
-*Система автоматизації сервісного центру: від прийому пристрою до друку чека.*
+
+**Система автоматизації сервісного центру: від прийому пристрою до друку чека.**
 
 ## 📖 Про проект (About)
 
@@ -67,9 +68,8 @@
 
 ## 📸 Скріншоти (Screenshots)
 
-| Прийом замовлення | Кабінет Майстра | Кабінет Адміна
-|:---:|:---:|
-| ![Manager Interface](assets/screen4.png) | ![Master Interface](assets/screen7.png) | ![Master Interface](assets/screen2.png)
+
+![Manager Interface](assets/screen4.png) ![Master Interface](assets/screen7.png) ![Master Interface](assets/screen2.png)
 
 ---
 
@@ -89,10 +89,10 @@
 
 3. Додаток буде доступний за адресою: http://localhost:8000
 
-🔮 Roadmap (Плани на розвиток)
+## 🔮 Roadmap (Плани на розвиток)
 
-    [ ] Інтеграція з Telegram API для сповіщення клієнтів про готовність.
+  * Інтеграція з Telegram API для сповіщення клієнтів про готовність.
 
-    [ ] Модуль розширеної фінансової звітності (графіки прибутку/витрат).
+  * Модуль розширеної фінансової звітності (графіки прибутку/витрат).
 
-    [ ] Мобільний додаток для майстрів (React Native).
+  * Мобільний додаток для майстрів (React Native).
