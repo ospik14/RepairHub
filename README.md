@@ -4,95 +4,95 @@
   <img src="assets/logo.png" width="200" alt="RepairHub Logo">
 </p>
 
-**Система автоматизації сервісного центру: від прийому пристрою до друку чека.**
+**Service center automation system: from device intake to printing the receipt.**
 
-## 📖 Про проект (About)
+## 📖 About the project 
 
-**RepairHub CRM** — це комплексне рішення для малих та середніх сервісних центрів. Проект народився як відповідь на хаос "паперового" обліку. Коли замовлення записуються на листочках, запчастини губляться на складі, а підрахунок прибутку в кінці місяця перетворюється на квест — бізнес втрачає гроші.
+**RepairHub CRM** — is a comprehensive solution for small and medium-sized service centers. The project was born as a response to the chaos of "paper" accounting. When orders are written down on slips of paper, spare parts get lost in the warehouse, and calculating profits at the end of the month turns into a quest — the business loses money.
 
-Ця система перетворює хаос на чіткий алгоритм:
-* **Жодного втраченого клієнта:** вся історія взаємодії в одному місці.
-* **Прозорий склад:** миттєвий контроль залишків запчастин.
-* **Фінансова дисципліна:** автоматичний розрахунок вартості робіт та звітність.
+This system turns chaos into a clear algorithm:
+* **No lost clients:** the entire interaction history is in one place.
+* **Transparent warehouse:** instant control over spare parts stock.
+* **Financial discipline:** automatic calculation of labor costs and reporting.
 
-Для мене цей проект став викликом у проектуванні складних систем з розмежуванням прав доступу та асинхронною архітектурою.
-
----
-
-## 🛡 Безпека та Надійність (Security First)
-
-Проект побудований з урахуванням сучасних стандартів безпеки даних:
-
-* **Багаторівнева Авторизація:** Використано **OAuth2** з **JWT (JSON Web Tokens)**. Реалізована система з `access` та `refresh` токенами, що забезпечує стабільну та безпечну сесію.
-* **Захист паролів:** Жодних відкритих паролів у базі. Використовується надійне хешування.
-* **Закрита реєстрація:** Нового співробітника може створити **лише адміністратор**. Це виключає появу випадкових людей у системі.
-* **Role-Based Access Control (RBAC):** Кожен користувач бачить лише те, що йому дозволено за роллю. Менеджер не зможе видалити працівника, а майстер не змінить ціни на складі.
+For me, this project became a challenge in designing complex systems with access control and asynchronous architecture.
 
 ---
 
-## 🚀 Основний функціонал (Key Features)
+## 🛡 Security and Reliability 
 
-### 👨‍💼 Модуль Менеджера (Customer Relations)
-* **Швидкий прийом:** Пошук клієнта за номером телефону або створення нового в пару кліків.
-* **Оформлення замовлення:** Реєстрація пристрою, опис проблеми та миттєвий запуск у роботу.
-* **Видача та розрахунок:** Зручний пошук готових замовлень та **автоматична генерація чека** для клієнта.
+The project is built considering modern data security standards:
 
-### 🛠 Модуль Майстра (Technical Workflow)
-* **Робочий стіл:** Список доступних замовлень ("Вільні") та особистий кабінет ("Мої замовлення").
-* **Керування ремонтом:** Зміна статусів, додавання використаних запчастин зі складу та фіксація вартості виконаної роботи.
-* **Авто-калькуляція:** Система сама рахує фінальну суму (робота майстра + ціна запчастин).
-
-### 👑 Модуль Адміністратора (Management & Analytics)
-* **HR-менеджмент:** Повний контроль над штатом (створення, редагування, звільнення співробітників).
-* **Контроль складу:** Моніторинг залишків, додавання нових позицій та редагування існуючих.
-* **Дашборд статистики:** Наочні показники доходу за місяць, кількість закритих замовлень та сповіщення про запчастини, що закінчуються.
+* **Multi-level Authorization:** Utilizes **OAuth2** with **JWT (JSON Web Tokens)**. A system with `access` and `refresh` tokens is implemented, ensuring a stable and secure session.
+* **Password Protection:** No plain-text passwords in the database. Reliable hashing is used.
+* **Closed Registration:** A new employee can **only be created by an administrator**. This prevents random people from appearing in the system.
+* **Role-Based Access Control (RBAC):** Each user sees only what is allowed by their role. A manager cannot delete an employee, and a technician won't change prices in the warehouse.
 
 ---
 
-## 🛠 Технологічний стек (Tech Stack)
+## 🚀 Key Functionality 
+
+### 👨‍💼 Manager Module 
+* **Fast Intake:** Search for a client by phone number or create a new one in a few clicks.
+* **Order Processing:** Registering a device, describing the problem, and instantly putting it to work.
+* **Handover and Checkout:** Convenient search for completed orders and **automatic receipt generation** for the client.
+
+### 🛠 Technician Module 
+* **Workspace:** List of available orders ("Free") and personal dashboard ("My Orders").
+* **Repair Management:** Changing statuses, adding used parts from the warehouse, and recording the cost of completed work.
+* **Auto-calculation:** The system automatically calculates the final amount (technician's labor + parts price).
+
+### 👑 Administrator Module 
+* **HR Management:** Full control over the staff (creating, editing, dismissing employees).
+* **Warehouse Control:** Monitoring stock, adding new items, and editing existing ones.
+* **Statistics Dashboard:** Visual indicators of monthly revenue, the number of closed orders, and notifications about low stock parts.
+
+---
+
+## 🛠 Technology Stack 
 
 **Backend:**
-* **FastAPI:** Високопродуктивний фреймворк для побудови API.
-* **SQLAlchemy (Async):** Робота з базою даних у неблокуючому режимі.
-* **PostgreSQL:** Потужна реляційна база даних.
-* **Pydantic:** Валідація даних та сувора типізація.
+* **FastAPI:** High-performance framework for building APIs.
+* **SQLAlchemy (Async):** Working with the database in non-blocking mode.
+* **PostgreSQL:** Powerful relational database.
+* **Pydantic:** Data validation and strict typing.
 
 **Frontend:**
-* **Vanilla JavaScript (ES6+):** Весь фронтенд написаний без важких фреймворків для максимальної швидкості та розуміння базових принципів Web API.
-* **Bootstrap 5:** Сучасний та адаптивний UI.
+* **Vanilla JavaScript (ES6+):** The entire frontend is written without heavy frameworks for maximum speed and understanding of basic Web API principles.
+* **Bootstrap 5:** Modern and responsive UI.
 
 **DevOps:**
-* **Docker & Docker Compose:** Проект повністю контейнеризований для швидкого розгортання в будь-якому середовищі.
+* **Docker & Docker Compose:** The project is fully containerized for quick deployment in any environment.
 
 ---
 
-## 📸 Скріншоти (Screenshots)
+## 📸 Screenshots (Screenshots)
 
 
 ![Manager Interface](assets/screen4.png) ![Master Interface](assets/screen7.png) ![Master Interface](assets/screen2.png)
 
 ---
 
-## 🐳 Швидкий запуск (Installation)
+## 🐳 Quick Start (Installation)
 
-Вам не потрібно встановлювати Python чи PostgreSQL. Достатньо мати встановлений **Docker**.
+You do not need to install Python or PostgreSQL. It is enough to have **Docker** installed.
 
-1. Клонуйте репозиторій:
+1. Clone the repository:
    ```bash
    git clone [https://github.com/ospik14/repairHub.git](https://github.com/ospik14/repairHub.git)
    cd repairHub
 
-2. Запустіть систему:
+2. Run the system:
     ```bash
 
     docker-compose up --build
 
-3. Додаток буде доступний за адресою: http://localhost:8000
+3. The application will be available at: http://localhost:8000
 
-## 🔮 Roadmap (Плани на розвиток)
+## 🔮 Roadmap 
 
-  * Інтеграція з Telegram API для сповіщення клієнтів про готовність.
+  * Integration with Telegram API to notify clients when ready.
 
-  * Модуль розширеної фінансової звітності (графіки прибутку/витрат).
+  * Advanced financial reporting module (profit/expense charts).
 
-  * Мобільний додаток для майстрів (React Native).
+  * Mobile app for technicians (React Native).
